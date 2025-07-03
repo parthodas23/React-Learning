@@ -1,9 +1,16 @@
-import { useState } from 'react'
+import React, { useState } from "react";
 
-import './App.css'
+const App = () => {
+  const [a, setA] = useState(0);
+  return (
+    <div>
+      <h1 className="text-xl bg-green-500 ">Number is {a}</h1>
+      <button onClick={() => setA(a + 1)}>Increment</button>
+      <button className="bg-amber-300" onClick={() => setA(a - 1)}>
+        Decrement
+      </button>
+    </div>
+  );
+};
 
-function App() {
-  
-}
-
-export default App
+export default App;
