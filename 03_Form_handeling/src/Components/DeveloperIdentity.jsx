@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-const DeveloperIdentity = ({ activeState, onHover }) => {
+const DeveloperIdentity = ({ activeState, onHover, isMobile }) => {
   const roles = [
     "creative developer",
     "problem solver",
@@ -15,6 +15,7 @@ const DeveloperIdentity = ({ activeState, onHover }) => {
     <div className="flex flex-col items-center pointer-events-auto">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
+        whileTap={{ scale: isMobile ? 0.95 : 1 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.5, duration: 0.8 }}
         className="mb-8"

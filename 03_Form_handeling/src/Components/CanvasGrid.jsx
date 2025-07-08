@@ -15,15 +15,12 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
     canvas.width = width;
     canvas.height = height;
 
-    // Set initial styles
     ctx.strokeStyle = "#E5E5E5";
     ctx.lineWidth = 0.5;
 
-    // Draw grid
     const drawGrid = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw vertical lines
       for (let x = 0; x <= width; x += 30) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -31,7 +28,6 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
         ctx.stroke();
       }
 
-      // Draw horizontal lines
       for (let y = 0; y <= height; y += 30) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -42,29 +38,10 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
 
     drawGrid();
 
-    // Handle canvas interactions
-    const handleInteraction = (e) => {
-      if (!interactionDetected.current) {
-        interactionDetected.current = true;
-        onInteraction();
-      }
-
-      // Create ripple effect
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      ctx.clearRect(0, 0, width, height);
-      drawGrid();
-
-      // Draw ripple
-      ctx.beginPath();
-      ctx.arc(x, y, 5, 0, Math.PI * 2);
-      ctx.fillStyle = "rgba(100, 100, 255, 0.1)";
-      ctx.fill();
-
-      // Animate ripple
+    // 💧 Ripple effect logic
+    const createRipple = (x, y) => {
       let radius = 5;
+
       const ripple = () => {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
@@ -82,15 +59,50 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
       };
 
       ripple();
-
-      
     };
 
+    // ⏱️ Throttle for mobile touch interactions
+    let lastTouch = 0;
+
+    // 👆 Mouse and touch interaction handler
+    const handleInteraction = (e) => {
+      // ⛔ Throttle mobile touchmove
+      if (e.type === "touchmove") {
+        const now = Date.now();
+        if (now - lastTouch < 50) return; // ~20fps limit
+        lastTouch = now;
+      }
+
+      if (!interactionDetected.current) {
+        interactionDetected.current = true;
+        onInteraction();
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || e.touches?.[0]?.clientX) - rect.left;
+      const y = (e.clientY || e.touches?.[0]?.clientY) - rect.top;
+
+      ctx.clearRect(0, 0, width, height);
+      drawGrid();
+
+      if (e.type === "touchmove") {
+        for (let i = 0; i < 3; i++) {
+          const offsetX = (Math.random() - 0.5) * 50;
+          const offsetY = (Math.random() - 0.5) * 50;
+          createRipple(x + offsetX, y + offsetY);
+        }
+      } else {
+        createRipple(x, y);
+      }
+    };
+
+    // ⏺️ Add event listeners
     if (activeState === "grid-appear") {
       canvas.addEventListener("mousemove", handleInteraction);
       canvas.addEventListener("touchmove", handleInteraction);
     }
 
+    // ⏹️ Cleanup
     return () => {
       canvas.removeEventListener("mousemove", handleInteraction);
       canvas.removeEventListener("touchmove", handleInteraction);

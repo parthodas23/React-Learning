@@ -3,7 +3,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiTerminal } from "react-icons/fi";
 
-const DeveloperConsole = ({ isOpen, toggleConsole, openFeature }) => {
+const DeveloperConsole = ({ isOpen, toggleConsole, openFeature, isMobile }) => {
   const features = [
     {
       id: "skill-orbs",
@@ -48,7 +48,9 @@ const DeveloperConsole = ({ isOpen, toggleConsole, openFeature }) => {
         onClick={toggleConsole}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        aria-label={isOpen ? "Close developer console" : "Open developer console"}
+        aria-label={
+          isOpen ? "Close developer console" : "Open developer console"
+        }
       >
         <FiTerminal className="text-xl" />
         <span className="font-mono text-sm">
@@ -58,37 +60,49 @@ const DeveloperConsole = ({ isOpen, toggleConsole, openFeature }) => {
 
       <AnimatePresence>
         {isOpen && (
-          <motion.div
-            className="mt-4 bg-white rounded-xl shadow-xl p-4 w-80 border border-indigo-100"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          >
-            <h3 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
-              <FiTerminal />
-              <span>Developer Tools</span>
-            </h3>
-            <div className="grid grid-cols-2 gap-3">
-              {features.map((feature) => (
-                <motion.button
-                  key={feature.id}
-                  className="flex flex-col items-center p-3 bg-indigo-50 rounded-lg border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-100 transition-colors"
-                  onClick={() => openFeature(feature.id)}
-                  whileHover={{ y: -3 }}
-                  aria-label={`Open ${feature.name}`}
-                >
-                  <span className="text-2xl mb-1">{feature.icon}</span>
-                  <span className="font-medium text-indigo-800 text-sm">
-                    {feature.name}
-                  </span>
-                  <span className="text-xs text-indigo-600 mt-1 text-center">
-                    {feature.description}
-                  </span>
-                </motion.button>
-              ))}
-            </div>
-          </motion.div>
+          <>
+            {/* Make console full-width on mobile */}
+            <motion.div
+              className={`mt-4 bg-white rounded-xl shadow-xl p-4 ${
+                isMobile ? "w-full fixed inset-x-4 bottom-20" : "w-80"
+              } border border-indigo-100`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            >
+              <h3 className="font-medium text-indigo-800 mb-3 flex items-center gap-2">
+                <FiTerminal />
+                <span>Developer Tools</span>
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                {features.map((feature) => (
+                  <motion.button
+                    key={feature.id}
+                    className="flex flex-col items-center p-3 bg-indigo-50 rounded-lg border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-100 transition-colors"
+                    onClick={() => openFeature(feature.id)}
+                    whileHover={{ y: -3 }}
+                    aria-label={`Open ${feature.name}`}
+                  >
+                    <span className="text-2xl mb-1">{feature.icon}</span>
+                    <span className="font-medium text-indigo-800 text-sm">
+                      {feature.name}
+                    </span>
+                    <span className="text-xs text-indigo-600 mt-1 text-center">
+                      {feature.description}
+                    </span>
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Add swipe indicators for mobile */}
+            {isMobile && isOpen && (
+              <div className="text-center text-gray-500 text-xs mt-2">
+                ← Swipe to view all features →
+              </div>
+            )}
+          </>
         )}
       </AnimatePresence>
     </div>
