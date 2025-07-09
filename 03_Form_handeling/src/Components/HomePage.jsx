@@ -1,20 +1,17 @@
-// src/components/HomePage.jsx
+// src/pages/HomePage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
 import CanvasGrid from "./CanvasGrid";
 import DeveloperIdentity from "./DeveloperIdentity";
-// import SkillDots from "./SkillDots";
-// import FloatingParticles from "./FloatingParticles";
 import FloatingProjects from "./FloatingProjects";
 import ContactPanel from "./ContactPanel";
 import DeveloperConsole from "./DeveloperConsole";
 import SkillOrbs from "./SkillOrbs";
-// import IntroVideo from "./IntroVideo";
 import ProblemSolving from "./ProblemSolving";
 import CodeMessageForm from "./CodeMessageForm";
 import JourneyTimeline from "./JourneyTimeline";
 import CollaborationMap from "./CollaborationMap";
-// import CodeArtGallery from "./CodeArtGallery";
 
 const HomePage = () => {
   const [activeState, setActiveState] = useState("initial");
@@ -66,33 +63,36 @@ const HomePage = () => {
       className="relative w-full h-screen overflow-hidden font-sans"
     >
       {/* Background canvas */}
-      <CanvasGrid
-        activeState={activeState}
-        onInteraction={handleGridInteraction}
-        isMobile={isMobile}
-      />
-      {/* Particle animation layer - appears after initial load */}
-      {/* {activeState !== "initial" && (
-        <div className="absolute inset-0 z-5">
-          <FloatingParticles count={40} />
-        </div>
-      )} */}
-      {/* Main content */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-30">
+      <div className="relative w-full h-screen">
+        <CanvasGrid
+          activeState={activeState}
+          onInteraction={handleGridInteraction}
+          isMobile={isMobile}
+        />
+      </div>
+
+      {/* Main content - UPDATED FOR MOBILE SPACING */}
+      <div
+        className={`absolute inset-0 flex flex-col ${
+          isMobile ? "items-center pt-15" : "items-center justify-center" // Changed pt-8 to pt-6
+        } pointer-events-none z-30`}
+      >
         <AnimatePresence>
           {activeState === "initial" && (
             <motion.div
               initial={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1.5 }}
-              className="text-center"
+              className="text-center px-4"
             >
               <motion.h1
-                className="text-2xl font-light text-gray-500"
+                className={`${
+                  isMobile ? "text-xl" : "text-2xl"
+                } font-light text-gray-500`}
                 animate={{ opacity: [0.3, 1, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
-                something is about to happen...
+                a slice of my slow little life...
               </motion.h1>
             </motion.div>
           )}
@@ -103,11 +103,14 @@ const HomePage = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 1 }}
-            className="flex flex-col items-center"
+            className={`flex flex-col items-center px-4 ${
+              isMobile ? "mt-15" : ""
+            }`}
           >
             <DeveloperIdentity
               activeState={activeState}
               onHover={handleIdentityHover}
+              isMobile={isMobile}
             />
           </motion.div>
         )}
@@ -117,14 +120,10 @@ const HomePage = () => {
       {activeState === "identity-reveal" && (
         <>
           <div className="absolute inset-0 z-20">
-           <FloatingProjects isMobile={isMobile} />
+            <FloatingProjects isMobile={isMobile} />
           </div>
-          <div className="absolute inset-0 z-40">
-            <ContactPanel />
-          </div>
-          <div className="absolute inset-0 z-50">
-            {" "}
-            {/* Higher z-index */}
+
+          <div className="absolute inset-0">
             <DeveloperConsole
               isOpen={consoleOpen}
               toggleConsole={() => setConsoleOpen(!consoleOpen)}
@@ -134,10 +133,19 @@ const HomePage = () => {
         </>
       )}
 
-      {/* Subtle hint for interaction */}
+      {/* Contact Panel - UPDATED POSITIONING */}
+      {activeState === "identity-reveal" && (
+        <ContactPanel isMobile={isMobile} />
+      )}
+
+      {/* Hint to interact - ADJUSTED POSITION */}
       {activeState === "grid-appear" && (
         <motion.div
-          className="absolute bottom-8 text-center w-full text-gray-400 text-sm z-30"
+          className={`absolute ${
+            isMobile ? "bottom-24" : "bottom-8"
+          } text-center w-full text-gray-400 ${
+            isMobile ? "text-xs" : "text-sm"
+          } z-30`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
@@ -146,18 +154,23 @@ const HomePage = () => {
             animate={{ y: [0, -5, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >
-            interact with the canvas
+            {isMobile ? "touch to interact" : "interact with the canvas"}
           </motion.div>
         </motion.div>
       )}
 
       {/* Feature overlays */}
       <AnimatePresence>
-        {activeFeature === "skill-orbs" && <SkillOrbs onClose={closeFeature} />}
-
-        {/* {activeFeature === "intro-video" && (
-          <IntroVideo onClose={closeFeature} />
-        )} */}
+        {activeFeature === "skill-orbs" && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-white bg-opacity-90 backdrop-blur-sm"
+          >
+            <SkillOrbs isMobile={isMobile} onClose={closeFeature} />
+          </motion.div>
+        )}
 
         {activeFeature === "problem-solving" && (
           <ProblemSolving onClose={closeFeature} />
@@ -174,10 +187,6 @@ const HomePage = () => {
         {activeFeature === "collaboration-map" && (
           <CollaborationMap onClose={closeFeature} />
         )}
-
-        {/* {activeFeature === "code-art" && (
-          <CodeArtGallery onClose={closeFeature} />
-        )} */}
       </AnimatePresence>
     </div>
   );

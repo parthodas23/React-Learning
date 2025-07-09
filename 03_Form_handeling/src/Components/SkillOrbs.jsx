@@ -4,10 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const SkillOrbs = ({ onClose, isMobile }) => {
   const skills = [
-    { name: "React", level: 95, color: "#61DAFB" },
-    { name: "JavaScript", level: 90, color: "#F7DF1E" },
-    { name: "Node.js", level: 85, color: "#68A063" },
-    { name: "TypeScript", level: 80, color: "#3178C6" },
+    { name: "React", level: 35, color: "#61DAFB" },
+    { name: "JavaScript", level: 77, color: "#F7DF1E" },
+    { name: "Node.js", level: 5, color: "#68A063" },
+    { name: "DSA", level: 75, color: "#3178C6" },
     { name: "Python", level: 75, color: "#3776AB" },
     { name: "GraphQL", level: 70, color: "#E10098" },
     { name: "CSS/UI", level: 85, color: "#2965F1" },

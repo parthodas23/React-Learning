@@ -1,21 +1,14 @@
-// src/components/ContactPanel.jsx
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion'; // Added AnimatePresence import
+import { motion, AnimatePresence } from 'framer-motion';
 
-const ContactPanel = ({className}) => {
+const ContactPanel = () => {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
-    <motion.div 
-      className={`absolute top-6 right-6 pointer-events-auto ${className}`}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 2.5, duration: 0.5 }}
-    >
-      <motion.button
-        className="bg-white bg-opacity-70 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-gray-200 text-gray-700 flex items-center gap-2"
-        whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.9)' }}
+    <div className="fixed top-6 right-6 z-50 pointer-events-auto">
+      <button
         onClick={() => setIsOpen(!isOpen)}
+        className="bg-white px-4 py-2 rounded-full shadow border border-gray-300 text-gray-700 flex items-center gap-2"
       >
         <span>Connect</span>
         <motion.div
@@ -24,39 +17,27 @@ const ContactPanel = ({className}) => {
         >
           ▼
         </motion.div>
-      </motion.button>
-      
+      </button>
+
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="absolute right-0 mt-2 bg-white rounded-xl shadow-lg p-4 w-64 backdrop-blur-sm bg-opacity-80"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+            className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg p-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-                <span className="text-gray-700">alex@portfolio.dev</span>
-              </div>
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-                <span className="text-gray-700">@alexdev</span>
-              </div>
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-                <span className="text-gray-700">in/alex-morgan</span>
-              </div>
-              <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
-                <div className="bg-gray-200 border-2 border-dashed rounded-xl w-8 h-8" />
-                <span className="text-gray-700">github.com/alex</span>
-              </div>
-            </div>
+            <ul className="space-y-2">
+              <li className="hover:bg-gray-100 px-3 py-2 rounded">alex@portfolio.dev</li>
+              <li className="hover:bg-gray-100 px-3 py-2 rounded">@alexdev</li>
+              <li className="hover:bg-gray-100 px-3 py-2 rounded">in/alex-morgan</li>
+              <li className="hover:bg-gray-100 px-3 py-2 rounded">github.com/alex</li>
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 };
 

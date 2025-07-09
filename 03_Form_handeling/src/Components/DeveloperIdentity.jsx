@@ -6,9 +6,9 @@ const DeveloperIdentity = ({ activeState, onHover, isMobile }) => {
   const roles = [
     "creative developer",
     "problem solver",
-    "ui architect",
-    "code artisan",
-    "tech enthusiast",
+    "javascript explorer",
+    "self thought learner",
+    "traveler",
   ];
 
   return (

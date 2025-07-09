@@ -2,9 +2,10 @@
 import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-const CanvasGrid = ({ activeState, onInteraction }) => {
+const CanvasGrid = ({ activeState, onInteraction, isMobile }) => {
   const canvasRef = useRef(null);
   const interactionDetected = useRef(false);
+  const gridSize = isMobile ? 40 : 30;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -15,20 +16,21 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
     canvas.width = width;
     canvas.height = height;
 
-    ctx.strokeStyle = "#E5E5E5";
-    ctx.lineWidth = 0.5;
+    // Use lighter grid lines for mobile
+    ctx.strokeStyle = isMobile ? "#EDEDED" : "#E5E5E5";
+    ctx.lineWidth = isMobile ? 0.3 : 0.5;
 
     const drawGrid = () => {
       ctx.clearRect(0, 0, width, height);
 
-      for (let x = 0; x <= width; x += 30) {
+      for (let x = 0; x <= width; x += gridSize) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, height);
         ctx.stroke();
       }
 
-      for (let y = 0; y <= height; y += 30) {
+      for (let y = 0; y <= height; y += gridSize) {
         ctx.beginPath();
         ctx.moveTo(0, y);
         ctx.lineTo(width, y);
@@ -38,20 +40,26 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
 
     drawGrid();
 
-    // 💧 Ripple effect logic
+    // Ripple effect logic
     const createRipple = (x, y) => {
       let radius = 5;
+      const rippleColor = isMobile 
+        ? "rgba(120, 120, 255, 0.3)" 
+        : "rgba(100, 100, 255, 0.5)";
 
       const ripple = () => {
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = `rgba(100, 100, 255, ${0.5 - radius / 100})`;
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = rippleColor.replace(
+          "0.5", 
+          `${0.5 - radius / 100}`
+        );
+        ctx.lineWidth = isMobile ? 1.5 : 2;
         ctx.stroke();
 
-        radius += 3;
+        radius += isMobile ? 4 : 3;
 
-        if (radius < 100) {
+        if (radius < (isMobile ? 80 : 100)) {
           requestAnimationFrame(ripple);
         } else {
           drawGrid();
@@ -61,15 +69,12 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
       ripple();
     };
 
-    // ⏱️ Throttle for mobile touch interactions
     let lastTouch = 0;
 
-    // 👆 Mouse and touch interaction handler
     const handleInteraction = (e) => {
-      // ⛔ Throttle mobile touchmove
       if (e.type === "touchmove") {
         const now = Date.now();
-        if (now - lastTouch < 50) return; // ~20fps limit
+        if (now - lastTouch < 50) return;
         lastTouch = now;
       }
 
@@ -86,9 +91,10 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
       drawGrid();
 
       if (e.type === "touchmove") {
-        for (let i = 0; i < 3; i++) {
-          const offsetX = (Math.random() - 0.5) * 50;
-          const offsetY = (Math.random() - 0.5) * 50;
+        // Create fewer ripples on mobile for performance
+        for (let i = 0; i < (isMobile ? 2 : 3); i++) {
+          const offsetX = (Math.random() - 0.5) * 40;
+          const offsetY = (Math.random() - 0.5) * 40;
           createRipple(x + offsetX, y + offsetY);
         }
       } else {
@@ -96,18 +102,18 @@ const CanvasGrid = ({ activeState, onInteraction }) => {
       }
     };
 
-    // ⏺️ Add event listeners
     if (activeState === "grid-appear") {
       canvas.addEventListener("mousemove", handleInteraction);
+      canvas.addEventListener("touchstart", handleInteraction);
       canvas.addEventListener("touchmove", handleInteraction);
     }
 
-    // ⏹️ Cleanup
     return () => {
       canvas.removeEventListener("mousemove", handleInteraction);
+      canvas.removeEventListener("touchstart", handleInteraction);
       canvas.removeEventListener("touchmove", handleInteraction);
     };
-  }, [activeState, onInteraction]);
+  }, [activeState, onInteraction, isMobile, gridSize]);
 
   return (
     <motion.canvas
