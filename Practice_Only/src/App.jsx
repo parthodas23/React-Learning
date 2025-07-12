@@ -1,52 +1,35 @@
-import React from "react";
-import Card from "./components/Card";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 const App = () => {
-  const data = [
-    {
-      name: "Alice Johnson",
-      city: "New York",
-      age: 29,
-      profession: "Software Engineer",
-      title: "Full Stack Developer",
-    },
-    {
-      name: "Ravi Sharma",
-      city: "Mumbai",
-      age: 34,
-      profession: "Digital Marketer",
-      title: "SEO & Ads Expert",
-    },
-    {
-      name: "Lina Wang",
-      city: "Beijing",
-      age: 27,
-      profession: "Graphic Designer",
-      title: "Creative Artist",
-    },
-    {
-      name: "Carlos Martinez",
-      city: "Madrid",
-      age: 41,
-      profession: "Teacher",
-      title: "High School Math Educator",
-    },
-    {
-      name: "Fatima Noor",
-      city: "Dhaka",
-      age: 31,
-      profession: "Entrepreneur",
-      title: "Founder of GreenTech BD",
-    },
-  ];
+  const [data, setData] = useState([]);
+  const getData = async () => {
+    const respose = await axios.get(
+      "https://picsum.photos/v2/list?page=2&limit=100"
+    );
+
+    setData(respose.data);
+  };
+  console.log(data);
+
+  useEffect(() => {  // redering by sidely
+    getData();
+  }, []);
 
   return (
-    <div className="p-10">
-      {data.map((e) => (
-        <>
-          <Card name={e.name} city={e.city} age={e.age} profession={e.profession} title={e.title} />
-        </>
-      ))}
+    <div>
+      <div className="p-10 text-center">
+        <button
+          onClick={getData}
+          className="text-2xl mb-2 bg-pink-600 rounded px-4 py-3 hover:bg-amber-700 active:scale-90 cursor-pointer"
+        >
+          Get Data
+        </button>
+        {data.map((e) => (
+          <div className="bg-purple-500 p-3">
+            <img src={e.download_url} />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
